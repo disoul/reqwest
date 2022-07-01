@@ -369,7 +369,7 @@ impl Connector {
                 // Disable Nagle's algorithm for TLS handshake
                 //
                 // https://www.openssl.org/docs/man1.1.1/man3/SSL_connect.html#NOTES
-                if !self.nodelay && (dst.scheme() == Some(&Scheme::HTTPS)) {
+                if (!self.nodelay && (dst.scheme() == Some(&Scheme::HTTPS))) || self.nodelay {
                     http.set_nodelay(true);
                 }
 
@@ -399,7 +399,7 @@ impl Connector {
                 // Disable Nagle's algorithm for TLS handshake
                 //
                 // https://www.openssl.org/docs/man1.1.1/man3/SSL_connect.html#NOTES
-                if !self.nodelay && (dst.scheme() == Some(&Scheme::HTTPS)) {
+                if (!self.nodelay && (dst.scheme() == Some(&Scheme::HTTPS))) || self.nodelay {
                     http.set_nodelay(true);
                 }
 
