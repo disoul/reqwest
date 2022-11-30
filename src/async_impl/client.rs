@@ -999,6 +999,12 @@ impl ClientBuilder {
         self
     }
 
+    /// Set tcp socket device binding
+    pub fn set_device(mut self, device: &str) -> ClientBuilder {
+        self.config.device.replace(device.to_string());
+        self
+    }
+
     /// Bind to a local IP Address.
     ///
     /// # Example
