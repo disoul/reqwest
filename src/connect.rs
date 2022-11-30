@@ -72,6 +72,25 @@ impl HttpConnector {
             .map(Self::TrustDnsWithOverrides)
             .map_err(crate::error::builder)
     }
+
+    pub(crate) fn set_device(&mut self, device: &str) {
+        match self {
+            Self::Gai(http) => {
+                http.set_device(device);
+            },
+            Self::GaiWithDnsOverrides(http) => {
+                http.set_device(device);
+            },
+            #[cfg(feature = "trust-dns")]
+            Self::TrustDns(http) => {
+                http.set_device(device);
+            },
+            #[cfg(feature = "trust-dns")]
+            Self::TrustDnsWithOverrides(http) => {
+                http.set_device(device);
+            },
+        }
+    }
 }
 
 macro_rules! impl_http_connector {
@@ -292,6 +311,19 @@ impl Connector {
 
     pub(crate) fn set_verbose(&mut self, enabled: bool) {
         self.verbose.0 = enabled;
+    }
+
+    pub(crate) fn set_device(&mut self, device: &str) {
+        let http = match &mut self.inner {
+            #[cfg(not(feature = "__tls"))]
+            Inner::Http(http) => http,
+            #[cfg(feature = "default-tls")]
+            Inner::DefaultTls(http, _) => http,
+            #[cfg(feature = "__rustls")]
+            Inner::RustlsTls(tls) => tls.http,
+        };
+
+        http.set_device(device);
     }
 
     #[cfg(feature = "socks")]

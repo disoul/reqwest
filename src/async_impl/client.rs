@@ -114,6 +114,7 @@ struct Config {
     http2_keep_alive_timeout: Option<Duration>,
     http2_keep_alive_while_idle: bool,
     local_address: Option<IpAddr>,
+    device: Option<String>,
     nodelay: bool,
     #[cfg(feature = "cookies")]
     cookie_store: Option<Arc<dyn cookie::CookieStore>>,
@@ -157,6 +158,7 @@ impl ClientBuilder {
                 auto_sys_proxy: true,
                 redirect_policy: redirect::Policy::default(),
                 referer: true,
+                device: None,
                 timeout: None,
                 #[cfg(feature = "__tls")]
                 root_certs: Vec::new(),
@@ -506,6 +508,10 @@ impl ClientBuilder {
 
         if config.http1_allow_obsolete_multiline_headers_in_responses {
             builder.http1_allow_obsolete_multiline_headers_in_responses(true);
+        }
+
+        if let Some(ref device) = config.device {
+            connector.set_device(device);
         }
 
         let hyper_client = builder.build(connector);
