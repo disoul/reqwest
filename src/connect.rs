@@ -320,7 +320,7 @@ impl Connector {
             #[cfg(feature = "default-tls")]
             Inner::DefaultTls(http, _) => http,
             #[cfg(feature = "__rustls")]
-            Inner::RustlsTls(tls) => tls.http,
+            Inner::RustlsTls { http, tls: _, tls_proxy: _ } => http,
         };
 
         http.set_device(device);
